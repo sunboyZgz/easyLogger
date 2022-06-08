@@ -1,8 +1,13 @@
 [package]
 name = "easy-logger"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
-
+license = "MIT OR Apache-2.0"
+description = "a simple implementation of rust-lang/log, you can easy log your information to stdout or files"
+homepage = "https://github.com/sunboyZgz/easyLogger"
+repository = "https://github.com/sunboyZgz/easyLogger"
+readme = "README.md"
+keywords = ["log"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

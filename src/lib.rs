@@ -2,8 +2,6 @@ use log::{self, Log, Metadata, Record, SetLoggerError, LevelFilter, Level};
 use time::{self, OffsetDateTime, format_description, error};
 use colored::{Color, Colorize };
 
-// use tools::fs; 
-
 use std::collections::HashMap;
 use std::cell::RefCell;
 use std::sync::Mutex;
