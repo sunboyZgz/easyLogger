@@ -5,7 +5,6 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "a simple implementation of rust-lang/log, you can easy log your information to stdout or files"
 documentation = "https://docs.rs/easy-logger"
-homepage = "https://github.com/sunboyZgz/easyLogger"
 repository = "https://github.com/sunboyZgz/easyLogger"
 readme = "README.md"
 keywords = ["log"]
