@@ -3,7 +3,7 @@ use time::{self, OffsetDateTime, format_description, error};
 use colored::{Color, Colorize };
 
 use std::collections::HashMap;
-use std::cell::RefCell;
+// use std::cell::RefCell;
 use std::sync::Mutex;
 use std::fs::{File, OpenOptions};
 use std::io::Write;
@@ -152,7 +152,7 @@ impl DestOption {
 pub struct ELogger{
     time_option: TimeOption,
     color_option: ColorOption,
-    dest: Mutex<RefCell<DestOption>> //use Mutex seems to be a error
+    dest: Mutex<DestOption> //use Mutex seems to be a error
 }
 impl Log for ELogger {
     fn enabled(&self, _metadata: &Metadata) -> bool {
@@ -182,18 +182,18 @@ impl Log for ELogger {
             
     }
     fn flush(&self){
-        let guard = self.dest.lock().unwrap();
-        match &guard.borrow().dest_out {//only read, don't need to lock
+        let mut guard = self.dest.lock().unwrap();
+        match &guard.dest_out {//only read, don't need to lock
             Some(file_name) => {
                 let mut file = open_file(file_name);
-                let output = guard.borrow().output_stream.clone();
+                let output = guard.output_stream.clone();
                 if let Ok(_) = file.write(output.as_bytes()) {
                     // file.flush().expect("flush error");
                 };
             },
             None => panic!("can't read file without filename")//here we should make a panic 
         };
-        guard.borrow_mut().output_stream.clear();
+        guard.output_stream.clear();
     }
 }
 fn open_file(file_name: &str) -> File {
@@ -234,13 +234,13 @@ impl ELogger {
         ELogger{
             time_option: TimeOption::new(),
             color_option: ColorOption::new(true, default_color_map),
-            dest: Mutex::new(RefCell::new(DestOption::new()))
+            dest: Mutex::new(DestOption::new())
         }
     }
     // a shortcut
     pub fn new_dest(dest: &str) -> Self {
         let s = Self::new();
-        *s.dest.lock().unwrap() = RefCell::new(DestOption::new_with_dest(dest));
+        *s.dest.lock().unwrap() = DestOption::new_with_dest(dest);
         s
     }
     ///  set the max Level, you can also use log::set_max_level
@@ -303,15 +303,15 @@ impl ELogger {
 
     /// destination
     pub fn is_use_dest(&self) -> bool {
-        self.dest.lock().unwrap().borrow().is_use_dest() //here I haven't resolved the unexpected err
+        self.dest.lock().unwrap().is_use_dest() //here I haven't resolved the unexpected err
     }
     /// push stream into
     pub fn push_output(&self, stream: &str) {
-        self.dest.lock().unwrap().borrow_mut().push_output(stream) // the same as above method
+        self.dest.lock().unwrap().push_output(stream) // the same as above method
     }
     /// control whether use the
     pub fn set_use_dest(self, is_open: bool) -> Self {
-        self.dest.lock().unwrap().borrow_mut().set_use_dest(is_open);
+        self.dest.lock().unwrap().set_use_dest(is_open);
         self
     }
     #[must_use]
@@ -321,10 +321,21 @@ impl ELogger {
 }
 
 ///only a logger init without any ohters
+/// # Examples
+/// ```
+/// use easy_logger::quick_init;
+/// use log::{log, Level};
+/// fn main() {
+///     quick_init();
+///     //the next line of code could be ignored, 
+///     //and default level will allow you to log message whose level greater than debug
+///     log::set_max_level(Level::Trace.to_level_filter());
+///     info!("hello easy-logger");
+/// }
 pub fn quick_init() -> Result<(), SetLoggerError> {
     ELogger::new().init()
 }
-///only a init shortcut
+///only a init shortcut the usage is the similar with quick_init()
 pub fn init_use_dest(dest: &str) -> Result<(), SetLoggerError> {
     ELogger::new_dest(dest).init()
 }

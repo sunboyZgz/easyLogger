@@ -1,6 +1,6 @@
 [package]
 name = "easy-logger"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "a simple implementation of rust-lang/log, you can easy log your information to stdout or files"
